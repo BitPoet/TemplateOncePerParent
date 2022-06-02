@@ -36,7 +36,7 @@ class TemplateOncePerParent extends WireData implements Module {
 		
 		foreach(array_keys($templates) as $k) {
 			$template = $templates[$k];
-			if($template->oncePerParent && $parent->count("template={$template}") > 0) {
+			if($template->oncePerParent && $parent->numChildren("template={$template}, include=all") > 0) {
 				unset($templates[$k]);
 			}
 		}
