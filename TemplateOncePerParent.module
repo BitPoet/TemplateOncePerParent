@@ -1,4 +1,4 @@
-<?php
+<?php namespace ProcessWire;
 
 class TemplateOncePerParent extends WireData implements Module {
 
@@ -6,14 +6,14 @@ class TemplateOncePerParent extends WireData implements Module {
 		return array(
 			'title' => __('Template Once Per Parent', __FILE__),
 			'summary' => __('Enable templates to be used once per parent page', __FILE__),
-			'version' => "0.1.1",
+			'version' => "0.2.0",
 			'icon' => 'cubes', 
 			'autoload'	=>	true
 		);
 	}
 	
 	public function init() {
-		$this->addHookAfter("ProcessPageAdd::getAllowedTemplates", $this, "filterAllowedTemplates");
+		$this->addHookAfter("ProcessPageAdd::getAllowedTemplates", $this, "filterAllowedTemplates", ["priority" => 200]);
 		$this->addHookAfter("ProcessTemplate::buildEditForm", $this, "afterBuildEditForm");
 		$this->addHookBefore("ProcessTemplate::executeSave", $this, "beforeSave");
 	}
@@ -36,7 +36,7 @@ class TemplateOncePerParent extends WireData implements Module {
 		
 		foreach(array_keys($templates) as $k) {
 			$template = $templates[$k];
-			if($template->oncePerParent && $parent->count("template={$template}") > 0) {
+			if($template->oncePerParent && $parent->children("template={$template}")->count() > 0) {
 				unset($templates[$k]);
 			}
 		}
